@@ -1,0 +1,22 @@
+# rename the entire workflow so it's easier to locate
+name: workflow naming
+# define an event that triggers our workflow
+on: workflow_dispatch
+
+# define one or more jobs to execute
+jobs:
+  job1:
+    #give this job a name
+    name: Say hello using echo
+    runs-on: ubuntu-latest
+      # setup the steps for a job
+    steps:
+  # run a command, or use an action
+    - name: step1
+      run: echo "hello from actions"
+  job2:
+    name: Say goodbye using echo
+    runs-on: windows-latest
+    steps:
+    - name: step2
+      run: echo "goodbye from actions"
