@@ -1,9 +1,10 @@
-name: Using Env Vars
+name: Using Env Vars 01
+
+on: workflow_dispatch
 
 env:
   USER: "Rick"
 
-on: workflow_dispatch
 jobs:
   job-1:
     name: Say hello
@@ -12,8 +13,10 @@ jobs:
       JOB_USER: "job 1 user"
     steps: 
       - name: use echo to say hello
-        run: echo "hello {{ env.USER }}"
+        run: echo "hello ${{ env.USER }}"
       - name: echo our JOB_USER
-        run: echo "hello {{ env.USER }}"
+        run: echo "hello ${{ env.USER }}"
       - name: use a step variable
-        run: echo "hello {{ env.USER }}"
+        run: echo "hello $STEP_USER"
+      - name: try to use above step var
+        run: echo "hello ${{ env.USER }}"
