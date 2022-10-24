@@ -1,0 +1,29 @@
+name: Using Env Vars 02
+
+on: 
+  workflow_dispatch:
+    inputs:
+      # name variable
+      name:
+        description: 'Person to greet'
+        required: true
+        default: 'Mona the Octocat'
+      # home variable
+      home:
+        description: 'location'
+        required: false
+        default: 'The Octoverse'
+
+
+env:
+  USER: ${{ github.event.inputs.name }}
+
+jobs:
+  job-1:
+    name: Say hello
+    runs-on: ubuntu-latest
+    env:
+      JOB_USER: "job 1 user"
+    steps: 
+      - name: use echo to say hello
+        run: echo "hello ${{ env.USER }}"
