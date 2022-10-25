@@ -1,0 +1,14 @@
+name: Caller workflow for test test of resuable workflows
+
+on: push
+
+jobs:		
+  scan-image:
+    needs: build
+    uses: ./.github/workflows/anchore-image-scan-template.yml
+    secrets:
+      OPTIDOCK_USERNAME: ${{ secrets.OPTIDOCK_USERNAME }}
+      OPTIDOCK_PASSWORD: ${{ secrets.OPTIDOCK_PASSWORD }}
+    #Pass the repo image 'atlas-che' to the anchore-image-scan-template.yml called workflow  
+    with: 
+      IMAGE_NAME: 'altas-che'  
