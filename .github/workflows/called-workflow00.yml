@@ -1,0 +1,30 @@
+name: Anchore Grype vulnerability scan Template
+
+on:
+  workflow_call:
+    inputs:
+      IMAGE_NAME:
+        description: name of image to be scanned  
+        required: true
+        type: string
+    secrets:
+      OPTIDOCK_USERNAME:
+        description: 'Username for optidock.azurecr.io'
+        required: true
+      OPTIDOCK_PASSWORD:
+        description: 'Password for optidock.azurecr.io'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  job1:
+    #give this job a name
+    name: Print passed image name
+    runs-on: ubuntu-latest
+      # setup the steps for a job
+    steps:
+  # run a command, or use an action
+    - name: step1
+      run: echo {{inputs.IMAGE_NAME}}
