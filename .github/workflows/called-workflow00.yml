@@ -19,12 +19,30 @@ permissions:
   contents: read
 
 jobs:
-  job1:
-    #give this job a name
-    name: Print passed image name
-    runs-on: ubuntu-latest
-      # setup the steps for a job
+  job-echo-image:
+      #give this job a name
+      name: Print passed image name
+      runs-on: ubuntu-latest
+        # setup the steps for a job
+      steps:
+    # run a command, or use an action
+      - name: step1
+        run: echo {{inputs.IMAGE_NAME}}
+
+  job-example_matrix:
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        node: [12, 14, 16]
+        include:
+          - os: windows-latest
+            node: 16
+            npm: 6
+    runs-on: ${{ matrix.os }}
     steps:
-  # run a command, or use an action
-    - name: step1
-      run: echo {{inputs.IMAGE_NAME}}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - if: ${{ matrix.npm }}
+        run: npm install -g npm@${{ matrix.npm }}
+      - run: npm --version

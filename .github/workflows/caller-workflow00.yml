@@ -2,13 +2,70 @@ name: Caller workflow for test test of resuable workflows
 
 on: push
 
-jobs:		
-  scan-image:
-    needs: build
-    uses: ./.github/workflows/anchore-image-scan-template.yml
+
+# A workflow run is made up of one or more jobs, which run in parallel by default. 
+# To run jobs sequentially, you can define dependencies on other jobs using the jobs.<job_id>.needs keyword.
+# You can run an unlimited number of jobs as long as you are within the workflow usage limits. 
+jobs:
+  job-do-something: # This is the job instantiation and name
+    name: job-do-something # 
+    runs-on: ubuntu-latest # Each job runs in a runner environment specified by runs-on.
+    # For a specific job, you can use jobs.<job_id>.permissions to modify the default permissions granted to the GITHUB_TOKEN, 
+    # adding or removing access as required, so that you only allow the minimum required access. For more information, 
+    # see "Authentication in a workflow."
+    # To disable permissions for all scopes: 'permissions: {}'
+    permissions:  
+      actions: read
+      checks: read
+      contents: read
+      id-token: read
+      issues: read
+      discussions: read
+      packages: read
+      pages: read
+      pull-requests: read
+      repository-projects: read
+      security-events: read
+      statuses: read
+  
+  job-do-somthing-else:
+    runs-on: windows-latest
+   
+    steps:
+    - name: Print a greeting
+      env: # Environment variable
+        MY_VAR: Hi there! My name is 
+        FIRST_NAME: Mona 
+        MIDDLE_NAME: The 
+        LAST_NAME: Octocat 
+      if: ${{ github.event_name == 'pull_request' && github.event.action == 'unassigned' }}  # Using contexts
+      run: | 
+          echo $MY_VAR $FIRST_NAME $MIDDLE_NAME $LAST_NAME. 
+          echo "IT WAS MEEEEEE!!!"
+
+  job-call-workflow:
+    needs: [job-do-something, job-do-somthing-else] #Needs to have jobs 'build' and 'job-do-something' to run first
+    if: github.repository == 'optilogic/che'
+    uses: ./.github/workflows/called-workflow00.yml
     secrets:
       OPTIDOCK_USERNAME: ${{ secrets.OPTIDOCK_USERNAME }}
       OPTIDOCK_PASSWORD: ${{ secrets.OPTIDOCK_PASSWORD }}
-    #Pass the repo image 'atlas-che' to the anchore-image-scan-template.yml called workflow  
+    #Pass the repo image 'atlas-che' to the called workflow 'anchore-image-scan-template.yml'
     with: 
-      IMAGE_NAME: 'altas-che'  
+      IMAGE_NAME: 'altas-che'
+
+
+
+# In this example, job1 must complete successfully before job2 begins, and job3 waits for both job1 and job2 to complete.
+#The jobs in this example run sequentially:
+# job1 -> job2 -> job3
+# job3 uses the always() conditional expression so that it always runs after job1 and job2 have completed, 
+# regardless of whether they were successful. 
+  job1:
+    name: job1
+  job2:
+    needs: job1
+  job3:
+    if: ${{ always() }}
+    needs: [job1, job2]
+  
