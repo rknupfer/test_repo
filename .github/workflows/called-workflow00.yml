@@ -7,6 +7,10 @@ on:
         description: name of image to be scanned  
         required: true
         type: string
+      TAG:
+        description: tag of image to be scanned
+        required: true
+        type: string
     secrets:
       OPTIDOCK_USERNAME:
         description: 'Username for optidock.azurecr.io'

@@ -54,7 +54,28 @@ jobs:
     with: 
       IMAGE_NAME: 'altas-che'
 
-
+  # main.yml file from andromeda-engine-db-migrator that calls two separate Grype scans,
+  # each running in its own container.  Image 'alpine-curl-jq-psql' does not have a version 
+  # update, hence the the TAG variable will be 'latest', the reason for separating it from the 'opti-engine-db-migrator' image which
+  # does have a TAG version.
+  scan-image-apline:
+    needs: build
+    uses: ./.github/workflows/anchore-image-scan-template.yml
+    secrets:
+      OPTIDOCK_USERNAME: ${{ secrets.OPTIDOCK_USERNAME }}
+      OPTIDOCK_PASSWORD: ${{ secrets.OPTIDOCK_PASSWORD }}
+    with: 
+      IMAGE_NAME: 'alpine-curl-jq-psql'
+      TAG: latest
+  scan-image-db-migrator:
+    needs: build
+    uses: ./.github/workflows/anchore-image-scan-template.yml
+    secrets:
+      OPTIDOCK_USERNAME: ${{ secrets.OPTIDOCK_USERNAME }}
+      OPTIDOCK_PASSWORD: ${{ secrets.OPTIDOCK_PASSWORD }}
+    with: 
+      IMAGE_NAME: 'opti-engine-db-migrator'
+      TAG: ${{ needs.build.outputs.tag }}
 
 # In this example, job1 must complete successfully before job2 begins, and job3 waits for both job1 and job2 to complete.
 #The jobs in this example run sequentially:
